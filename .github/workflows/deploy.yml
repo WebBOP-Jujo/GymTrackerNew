@@ -9,33 +9,25 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
-     contents: write # Necesario para que la acción peaceiris/actions-gh-pages pueda escribir en la rama gh-pages
+     contents: write
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v4 # Actualizado a v4
+        uses: actions/checkout@v4
 
       - name: Set up Node.js 🟩
-        uses: actions/setup-node@v4 # Actualizado a v4
+        uses: actions/setup-node@v4
         with:
-          node-version: '18' # O tu versión preferida de Node.js
-          cache: 'npm' # O 'yarn'
+          node-version: '18'
+          cache: 'npm'
 
       - name: Install dependencies 👨‍💻
-        run: npm install # O yarn install
+        run: npm install
 
       - name: Build 🏗️
-        run: npm run build # O yarn build
-        env:
-         # Si estuvieras usando archivos .env para las claves de Supabase para la compilación, configúralas aquí
-         # VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-         # VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-         # Nota: Tu configuración actual tiene las claves hardcodeadas en constants.ts,
-         # por lo que estas variables de entorno podrían no ser utilizadas por la compilación de Vite
-         # a menos que cambies constants.ts para usar import.meta.env
+        run: npm run build
 
       - name: Deploy to GitHub Pages 🚀
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          # cname: tudominio.com # Si tienes un dominio personalizado
