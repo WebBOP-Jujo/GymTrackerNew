@@ -1,0 +1,5 @@
+{
+  "name": "Gym Tracker",
+  "description": "A web application to log gym workouts, manage exercises, and track progress, powered by Supabase.",
+  "requestFramePermissions": []
+}
