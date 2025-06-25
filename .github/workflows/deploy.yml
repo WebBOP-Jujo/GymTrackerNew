@@ -1,33 +1,50 @@
-name: Deploy to GitHub Pages
+# .github/workflows/deploy.yml
 
-on:
-  push:
+name: Deploy to GitHub Pages # Nombre que aparecerá en la pestaña "Actions"
+
+on: # Eventos que dispararán este flujo de trabajo
+  push: # Se activa cuando haces un 'push'
     branches:
-      - main # O tu rama principal
+      - main # Específicamente a la rama 'main' (o la que uses como principal, ej: master)
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    permissions:
-     contents: write
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v4
+jobs: # Los trabajos (tareas) que se ejecutarán
+  build-and-deploy: # Nombre de tu trabajo (puedes elegir otro)
+    runs-on: ubuntu-latest # El tipo de máquina virtual donde se ejecutará (Ubuntu es común)
+    
+    permissions: # Permisos necesarios para este trabajo
+      contents: write # Esencial para que la acción 'peaceiris/actions-gh-pages' pueda escribir en la rama gh-pages
+
+    steps: # Los pasos individuales dentro del trabajo 'build-and-deploy'
+      - name: Checkout 🛎️ 
+        # Este paso descarga tu código del repositorio a la máquina virtual
+        uses: actions/checkout@v4 # Usa una acción predefinida de GitHub
 
       - name: Set up Node.js 🟩
+        # Configura el entorno de Node.js necesario para instalar dependencias y compilar
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: '18' # Especifica la versión de Node.js (ajusta según necesites)
+          cache: 'npm' # Habilita el caché para 'npm' para acelerar instalaciones futuras (o 'yarn' si usas yarn)
 
       - name: Install dependencies 👨‍💻
-        run: npm install
+        # Instala las dependencias de tu proyecto listadas en package.json
+        run: npm install # O 'yarn install' si usas yarn
 
       - name: Build 🏗️
-        run: npm run build
+        # Compila tu aplicación Vite para producción
+        run: npm run build # Ejecuta el script 'build' de tu package.json
+        # env: # Sección para variables de entorno si fueran necesarias para la compilación
+          # VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          # VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          # NOTA: Tus claves de Supabase están actualmente hardcodeadas en constants.ts.
+          # Si las movieras a un archivo .env y las accedieras con import.meta.env.VITE_*,
+          # necesitarías configurar "Repository Secrets" en GitHub y referenciarlos aquí.
+          # Para tu configuración actual, esta sección 'env' no es estrictamente necesaria para las claves.
 
       - name: Deploy to GitHub Pages 🚀
+        # Este paso usa una acción de la comunidad para desplegar a GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          github_token: ${{ secrets.GITHUB_TOKEN }} # Token automático proporcionado por GitHub Actions para autenticación
+          publish_dir: ./dist # La carpeta que contiene los archivos compilados (tu carpeta 'dist')
+          # cname: tudominio.com # Descomenta y configura si tienes un dominio personalizado para GitHub Pages
